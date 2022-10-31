@@ -1,0 +1,110 @@
+# gia_screens.kv
+
+ScreenManager:
+    id: screen_manager
+    #transition: FadeTransition()
+    Menu:
+        id: menu
+        name: 'menu'
+        manager: 'screen_manager'
+    AbstractSingleTest:
+        id: singletest
+        name: 'singletest'
+        manager: 'screen_manager'
+    NumbersTest:
+        id: numbers
+        name: 'numbers'
+        manager: 'screen_manager'
+    LettersTest:
+        id: letters
+        name: 'letters'
+        manager: 'screen_manager'
+    RTest:
+        id: rotated_r
+        name: 'rotated_r'
+        manager: 'screen_manager'
+    PairsTest:
+        id: pairs
+        name: 'pairs'
+        manager: 'screen_manager'
+    ReasoningTest:
+        id: reasoning
+        name: 'reasoning'
+        manager: 'screen_manager'
+
+
+<Menu>:
+    orientation: "vertical"
+    Label:
+        size_hint_y: 0.2
+        text: 'Choose a GIA test'
+        font_size: 40
+    Button:
+        text: 'Number speed & accuracy'
+        font_size: 30
+        size_hint_y: 0.2
+        on_release: root.go_to_a_screen_test('numbers')
+    Button:
+        text: 'Perceptual speed'
+        font_size: 30
+        size_hint_y: 0.2
+        on_release: root.go_to_a_screen_test('letters')
+    Button:
+        text: 'Spatial visualization'
+        font_size: 30
+        size_hint_y: 0.2
+        on_release: root.go_to_a_screen_test('rotated_r')
+    Button:
+        text: 'Word meaning'
+        font_size: 30
+        size_hint_y: 0.2
+        on_release: root.go_to_a_screen_test('pairs')
+    Button:
+        text: 'Reasoning'
+        font_size: 30
+        size_hint_y: 0.2
+        on_release: root.go_to_a_screen_test('reasoning')
+
+<SingleTestInterface>:
+    orientation: "vertical"
+    Label:
+        id: score_lbl
+        halign: 'center'
+        valign: 'middle'
+        font_size: 24
+        size_hint_y: 0.2
+        text: ''
+    RelativeLayout:
+        id: boxtest
+        orientation: "horizontal"
+        size_hint_y: 0.6
+
+    Button:
+        id: to_menu
+        font_size: 30
+        size_hint_y: 0.2
+        text: 'Back to the menu'
+        on_release: root.remove_test_layout()
+
+<NumbersTest>:
+    orientation: "vertical"
+
+<LettersTest>:
+    orientation: "vertical"
+
+<RTest>:
+    orientation: "vertical"
+
+<PairsTest>:
+    orientation: "vertical"
+
+<ReasoningTest>:
+    orientation: "vertical"
+
+
+
+
+
+
+
+
