@@ -18,6 +18,7 @@ from io import BytesIO
 from dataclasses import dataclass
 import threading
 import gia_algo
+from kivy.clock import Clock
 
 
 @dataclass
@@ -77,7 +78,7 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
         self.timer: threading.Timer = None
         self.details_results: List[AnswerDetails] = []  # To store all the details of each question answered
         self.question_start_time: float = 0
-        self.duration: int = 120
+        self.duration: int = 160
 
     @classmethod
     def __subclasshook__(cls, subclass):
@@ -116,14 +117,30 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
             self.score += 1
             # Set the question detail correct parameter to True
             detail.correct = True
+
+            # Get the proper update function to call
+            func = functions_for_test[self.screen_name]
+            # Generates a new question and updates the layout
+            self.update_layout_with_new_question(func)
+            self.number_of_questions += 1
         else:
             self.score -= 1
             print(f'wrong! {self.question}, Correct answer is: {self.answer}, yours: {button.text}')
-        # Get the proper update function to call
-        func = functions_for_test[self.screen_name]
-        # Generates a new question and updates the layout
-        self.update_layout_with_new_question(func)
-        self.number_of_questions += 1
+            self.ids.wrong_lbl.text = f'WRONG! {self.answer}'
+            self.ids.wrong_lbl.opacity = 1
+            # time.sleep(3)
+
+            # Get the proper update function to call
+            func = functions_for_test[self.screen_name]
+            # Generates a new question and updates the layout
+            # self.root.after.update_layout_with_new_question(func)
+
+            Clock.schedule_once(lambda _: self.update_layout_with_new_question(func), 0)
+            Clock.schedule_once(lambda _: self.hideLabel(), 0)
+            self.number_of_questions += 1
+
+    def hideLabel(self):
+        self.ids.wrong_lbl.opacity = 0
 
     def stop_game(self):
         """ When the timer is done, disable all buttons and show the user score"""
@@ -235,7 +252,7 @@ class RTest(SingleTestInterface):
 
     def update_layout_with_new_question(self, func):
         # print("updatet?")
-        char = random.choice(["N", "a", "b", "q", "F", "G", "R", "E", "S", "L", "Z"])
+        char = random.choice(["N", "a", "b", "q", "F", "G", "R", "e", "S", "L"])
         super().update_layout_with_new_question(func)
         R_data =[self.question[0][0],self.question[1][0],self.question[0][1],self.question[1][1]]
         for data, image in zip(R_data,self.widgets['images'].values()):
