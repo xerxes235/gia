@@ -2,7 +2,7 @@ import random
 from typing import List
 from collections import Counter
 import csv
-
+import os
 
 def number_speed_and_accuracy():
     ''' Return a list of 3 numbers compiling with the following rules:
@@ -11,14 +11,30 @@ def number_speed_and_accuracy():
         - The minimum difference between any 2 numbers is 2
         - The difference between 2 numbers can't be the same'''
     def get_three_valid_numbers() -> List[int]:
-        numbers = [0,0,0]
-        while numbers[2]-numbers[0] > 9 \
-                or numbers[2]-numbers[1]<2 \
-                or numbers[1]-numbers[0]<2 \
-                or numbers[2]-numbers[1] == numbers[1]-numbers[0]:
-            numbers = sorted(random.sample(range(2,29),3))
-        random.shuffle(numbers)
-        return numbers
+        # numbers = [0,0,0]
+        # while numbers[2]-numbers[0] > 9 \
+        #         or numbers[2]-numbers[1]<2 \
+        #         or numbers[1]-numbers[0]<2 \
+        #         or numbers[2]-numbers[1] == numbers[1]-numbers[0]:
+        #     numbers = sorted(random.sample(range(2,29),3))
+
+        maxmin = [0, 0]
+
+        while maxmin[0] == maxmin[1] \
+            or maxmin[1] - maxmin[0] < 3:
+            maxmin = sorted(random.sample(range(2,29),2)) # 21 22 23 24 25 26
+
+        median = 0
+
+        while median <= maxmin[0] \
+            or median >= maxmin[1] \
+            or median == (maxmin[1] + maxmin[0]) / 2:
+            median = ((maxmin[1] + maxmin[0]) // 2) + random.sample(range(-2, 2), 1)[0]
+
+
+        return [maxmin[0], median, maxmin[1]]
+        # random.shuffle(numbers)
+        # return numbers
 
     # Expect: The difference between 2 numbers of the list is not the same.
     def find_answer(numbers:List[int]) -> int:
@@ -41,10 +57,10 @@ def perceptual_speed():
                'f':['k'],
                'g':['b','p','q','d'],
                'h':['k'],
-               'i':['l','j'],
+               'i':['j'],
                'j':['i','l'],
                'k':['h'],
-               'l':['i','j'],
+               'l':['j'],
                'm':['n'],
                'n':['m'],
                'o':['c'],
@@ -81,7 +97,7 @@ def perceptual_speed():
                 up.append(new_pair[0])
                 down.append(new_pair[1])
 
-        if random.randbytes(1):
+        if os.urandom(1): # random.randbytes(1):
             up = [x.upper() for x in up]
         else:
             down = [x.upper() for x in down]

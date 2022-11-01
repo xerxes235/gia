@@ -30,11 +30,11 @@ class AnswerDetails:
     correct: bool = False
 
 
-functions_for_test = {'numbers':gia_algo.number_speed_and_accuracy,
-                      'letters':gia_algo.perceptual_speed,
-                      'rotated_r':gia_algo.spatial_visualisation,
-                      'pairs':gia_algo.word_meaning,
-                      'reasoning':gia_algo.reasoning}
+functions_for_test = {'numbers': gia_algo.number_speed_and_accuracy,
+                      'letters': gia_algo.perceptual_speed,
+                      'rotated_r': gia_algo.spatial_visualisation,
+                      'pairs': gia_algo.word_meaning,
+                      'reasoning': gia_algo.reasoning}
 
 
 class Menu(BoxLayout, Screen):
@@ -43,6 +43,7 @@ class Menu(BoxLayout, Screen):
     set the needed extra layout
     and generates the first question.
     """
+
     def go_to_a_screen_test(self, screen_name: str):
         """"""
         app.root.current = screen_name
@@ -54,19 +55,21 @@ class Menu(BoxLayout, Screen):
         screen.start_timer()
 
 
-class MetaSingleTest(abc.ABCMeta,type(Screen)):
+class MetaSingleTest(abc.ABCMeta, type(Screen)):
     """Combined meta class with abc and kivy"""
     pass
 
 
 class AbstractSingleTest(abc.ABC, Screen, metaclass=MetaSingleTest):
     """Abstract SingleTest class to implement the new metaclass"""
+
     def __init__(self, **kwargs):
         super(AbstractSingleTest, self).__init__(**kwargs)
 
 
 class SingleTestInterface(BoxLayout, AbstractSingleTest):
     """Interface for all the different test screens classes"""
+
     def __init__(self, **kwargs):
         super(SingleTestInterface, self).__init__(**kwargs)
         self.screen_name = ''
@@ -74,11 +77,13 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
         self.answer: str = ''
         self.score: int = 0
         self.number_of_questions: int = 1
-        self.widgets: dict = {'buttons': {}, 'labels': {}, 'images': {},'box':{}}
+        self.widgets: dict = {'buttons': {},
+                              'labels': {}, 'images': {}, 'box': {}}
         self.timer: threading.Timer = None
-        self.details_results: List[AnswerDetails] = []  # To store all the details of each question answered
+        # To store all the details of each question answered
+        self.details_results: List[AnswerDetails] = []
         self.question_start_time: float = 0
-        self.duration: int = 160
+        self.duration: int = 240
 
     @classmethod
     def __subclasshook__(cls, subclass):
@@ -97,11 +102,11 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
     def update_layout_with_new_question(self, func):
         """Generates a new question and assigns it to the layout of a given test"""
         self.question_start_time = time.time()
-        self.question,self.answer = func()
+        self.question, self.answer = func()
 
     def create_new_detail_result(self):
-        detail = AnswerDetails(question= self.question,
-                               answer= self.answer,
+        detail = AnswerDetails(question=self.question,
+                               answer=self.answer,
                                answering_time=time.time()-self.question_start_time,
                                nb=self.number_of_questions
                                )
@@ -125,7 +130,8 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
             self.number_of_questions += 1
         else:
             self.score -= 1
-            print(f'wrong! {self.question}, Correct answer is: {self.answer}, yours: {button.text}')
+            print(
+                f'wrong! {self.question}, Correct answer is: {self.answer}, yours: {button.text}')
             self.ids.wrong_lbl.text = f'WRONG! {self.answer}'
             self.ids.wrong_lbl.opacity = 1
             # time.sleep(3)
@@ -135,7 +141,8 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
             # Generates a new question and updates the layout
             # self.root.after.update_layout_with_new_question(func)
 
-            Clock.schedule_once(lambda _: self.update_layout_with_new_question(func), 0)
+            Clock.schedule_once(
+                lambda _: self.update_layout_with_new_question(func), 0)
             Clock.schedule_once(lambda _: self.hideLabel(), 0)
             self.number_of_questions += 1
 
@@ -149,9 +156,11 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
         self.ids.score_lbl.text = f'Your score is {self.score}\n' \
                                   f'There was {self.number_of_questions} questions'
         for detail in self.details_results:
-            print(f'Question: {detail.nb} was {detail.correct} in {round(detail.answering_time,1)} s')
-        
-        print (f'Avg time per question is: {round( (self.duration)  / (self.number_of_questions - 1), 1)}')
+            print(
+                f'Question: {detail.nb} was {detail.correct} in {round(detail.answering_time,1)} s')
+
+        print(
+            f'Avg time per question is: {round( (self.duration)  / (self.number_of_questions - 1), 1)}')
 
     def start_timer(self):
         """Timer to start when a test is starting"""
@@ -207,7 +216,7 @@ class LettersTest(SingleTestInterface):
                            font_size=50,
                            disabled=False)
             answers_line.add_widget(a_btn)
-            self.widgets['buttons'][f'answer_{str(n)}']=a_btn
+            self.widgets['buttons'][f'answer_{str(n)}'] = a_btn
         h_layout.add_widget(grid)
         h_layout.add_widget(Label(size_hint=(1, 0.2)))
         h_layout.add_widget(answers_line)
@@ -216,7 +225,7 @@ class LettersTest(SingleTestInterface):
     def update_layout_with_new_question(self, func):
         super().update_layout_with_new_question(func)
         print(self)
-        for label, letter in zip(self.widgets['labels'],self.question):
+        for label, letter in zip(self.widgets['labels'], self.question):
             self.widgets['labels'][label].text = letter
 
 
@@ -245,17 +254,19 @@ class RTest(SingleTestInterface):
                            font_size=50,
                            disabled=False)
             answers_line.add_widget(a_btn)
-            self.widgets['buttons'][f'answer_{str(n)}']=a_btn
-        h_layout.add_widget(Label(size_hint=(1,0.2)))
+            self.widgets['buttons'][f'answer_{str(n)}'] = a_btn
+        h_layout.add_widget(Label(size_hint=(1, 0.2)))
         h_layout.add_widget(answers_line)
         self.ids.boxtest.add_widget(h_layout)
 
     def update_layout_with_new_question(self, func):
         # print("updatet?")
-        char = random.choice(["N", "a", "b", "q", "F", "G", "R", "e", "S", "L"])
+        char = random.choice(["N", "p", "G", "S", "F", "J", "J"])
+        # char = random.choice(["N", "a", "b", "q", "F", "G", "R", "e", "S", "L"])
         super().update_layout_with_new_question(func)
-        R_data =[self.question[0][0],self.question[1][0],self.question[0][1],self.question[1][1]]
-        for data, image in zip(R_data,self.widgets['images'].values()):
+        R_data = [self.question[0][0], self.question[1]
+                  [0], self.question[0][1], self.question[1][1]]
+        for data, image in zip(R_data, self.widgets['images'].values()):
             source = make_r_image(char, data[0], data[1])
             image.texture = source.texture
 
@@ -292,13 +303,15 @@ class ReasoningTest(SingleTestInterface):
         self.widgets['box']['buttons'] = button_layout
         # Create buttons but don't add them to the layout yet.
         # Only when update_layout_with_new_question is called
-        see_question = Button(text='Get question',on_release=self.get_question, font_size = 30
+        see_question = Button(text='Get question', on_release=self.get_question, font_size=30
                               )
-        name1 = Button(text='', on_release=self.check_answer_update_score_and_add_new_question, font_size = 40, )
-        name2 = Button(text='', on_release=self.check_answer_update_score_and_add_new_question, font_size = 40, )
-        self.widgets['buttons']['see_question']=see_question
-        self.widgets['buttons']['name1']=name1
-        self.widgets['buttons']['name2']=name2
+        name1 = Button(
+            text='', on_release=self.check_answer_update_score_and_add_new_question, font_size=40, )
+        name2 = Button(
+            text='', on_release=self.check_answer_update_score_and_add_new_question, font_size=40, )
+        self.widgets['buttons']['see_question'] = see_question
+        self.widgets['buttons']['name1'] = name1
+        self.widgets['buttons']['name2'] = name2
         # Add the label and buttons layout to the main layout
         h_layout.add_widget(fact_question)
         h_layout.add_widget(button_layout)
@@ -308,10 +321,13 @@ class ReasoningTest(SingleTestInterface):
         super().update_layout_with_new_question(func)
         self.widgets['labels']['fact'].text = self.question[0]
         # Remove the answers buttons
-        self.widgets['box']['buttons'].remove_widget(self.widgets['buttons']['name1'])
-        self.widgets['box']['buttons'].remove_widget(self.widgets['buttons']['name2'])
+        self.widgets['box']['buttons'].remove_widget(
+            self.widgets['buttons']['name1'])
+        self.widgets['box']['buttons'].remove_widget(
+            self.widgets['buttons']['name2'])
         # Add the See question button
-        self.widgets['box']['buttons'].add_widget(self.widgets['buttons']['see_question'])
+        self.widgets['box']['buttons'].add_widget(
+            self.widgets['buttons']['see_question'])
 
     def get_question(self, d):
         # Shuffle the 2 answer names so that the first one named in the fact
@@ -322,13 +338,16 @@ class ReasoningTest(SingleTestInterface):
         self.widgets['labels']['fact'].text = self.question[1]
         # Remove the See question button
         self.widgets['box']['buttons'].size_hint = (0.8, 0.5)
-        self.widgets['box']['buttons'].remove_widget(self.widgets['buttons']['see_question'])
+        self.widgets['box']['buttons'].remove_widget(
+            self.widgets['buttons']['see_question'])
         # Set the text on the answer buttons
         self.widgets['buttons']['name1'].text = shuffled_names[0]
         self.widgets['buttons']['name2'].text = shuffled_names[1]
         # Add the 2 answer buttons to the layout
-        self.widgets['box']['buttons'].add_widget(self.widgets['buttons']['name1'])
-        self.widgets['box']['buttons'].add_widget(self.widgets['buttons']['name2'])
+        self.widgets['box']['buttons'].add_widget(
+            self.widgets['buttons']['name1'])
+        self.widgets['box']['buttons'].add_widget(
+            self.widgets['buttons']['name2'])
 
 
 def layout_for_3_choices(screen):
@@ -355,13 +374,13 @@ def update_layout_for_3_choices(screen):
 def make_r_image(char, side, angle):
     """Generates a PIL Image of a drawn R with a given side and angle"""
     # Define text font
-    fnt = ImageFont.truetype('Helvetica', 85)
+    fnt = ImageFont.truetype('Arial', 85)
     # Create a new PIL image
-    image = Image.new(mode = "RGB", size = (150,150), color = "white")
+    image = Image.new(mode="RGB", size=(150, 150), color="white")
     # Draw a black R on the image
     draw = ImageDraw.Draw(image)
     # print("hererz")
-    draw.text((40, 40), char, font=fnt, fill='black',align='center',stroke_width=1,
+    draw.text((40, 40), char, font=fnt, fill='black', align='center', stroke_width=1,
               stroke_fill="black")
     # Rotate the image
     image = image.rotate(angle)
