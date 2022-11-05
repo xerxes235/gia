@@ -20,7 +20,9 @@ def number_speed_and_accuracy():
 
         maxmin = [0, 0]
 
+#  10  makes even harder
         while maxmin[0] == maxmin[1] \
+            or maxmin[1] - maxmin[0] < 10 \
             or maxmin[1] - maxmin[0] < 3:
             maxmin = sorted(random.sample(range(2,29),2)) # 21 22 23 24 25 26
 
@@ -32,7 +34,9 @@ def number_speed_and_accuracy():
             median = ((maxmin[1] + maxmin[0]) // 2) + random.sample(range(-2, 2), 1)[0]
 
 
-        return [maxmin[0], median, maxmin[1]]
+        numbers = [maxmin[0], median, maxmin[1]]
+        random.shuffle(numbers)
+        return numbers
         # random.shuffle(numbers)
         # return numbers
 

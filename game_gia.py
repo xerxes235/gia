@@ -142,8 +142,8 @@ class SingleTestInterface(BoxLayout, AbstractSingleTest):
             # self.root.after.update_layout_with_new_question(func)
 
             Clock.schedule_once(
-                lambda _: self.update_layout_with_new_question(func), 0)
-            Clock.schedule_once(lambda _: self.hideLabel(), 0)
+                lambda _: self.update_layout_with_new_question(func), 5)
+            Clock.schedule_once(lambda _: self.hideLabel(), 1)
             self.number_of_questions += 1
 
     def hideLabel(self):
@@ -261,8 +261,9 @@ class RTest(SingleTestInterface):
 
     def update_layout_with_new_question(self, func):
         # print("updatet?")
-        char = random.choice(["N", "p", "G", "S", "F", "J", "J"])
-        # char = random.choice(["N", "a", "b", "q", "F", "G", "R", "e", "S", "L"])
+        # char = random.choice(["N", "p", "G", "S", "F", "J", "J"])
+        # char = random.choice(["R", "N"])
+        char = random.choice(["N", "a", "p", "F", "G", "R", "e", "S", "J"])
         super().update_layout_with_new_question(func)
         R_data = [self.question[0][0], self.question[1]
                   [0], self.question[0][1], self.question[1][1]]
